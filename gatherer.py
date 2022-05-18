@@ -9,22 +9,20 @@ import time
 
 from service_builder import ServiceBuilder
 
+FORM_IDS = ["1u6EXUqfPgb3KvjrwkI-o-oL_EGB1FWmru7VVnsXgolk",
+               "17DgT-8UA0xgf9OhDQ15uVNrrqsLedPolg3Ep7DYoUms"]
 
 def main():
     service = ServiceBuilder().service
-    formIDs = ["1u6EXUqfPgb3KvjrwkI-o-oL_EGB1FWmru7VVnsXgolk",
-               "17DgT-8UA0xgf9OhDQ15uVNrrqsLedPolg3Ep7DYoUms"]
-
+    
     maxIter = 100
     for i in range(maxIter):
-        answerDict = getAnswers(service, formIDs)
+        answerDict = getAnswers(service, FORM_IDS)
         answerList = []
-        print(answerDict)
 
         for formKey in answerDict:
             processedAnswers = processAnswer(answerDict[formKey])
 
-            print(formKey, processedAnswers)
             answerList.append(processedAnswers)
 
         print(f"Final answer list: {answerList}")
@@ -34,14 +32,27 @@ def main():
             print("Sleeping for 1 min")
             time.sleep(60)
 
+def gatherData() -> list:
+    service = ServiceBuilder().service
+    
+    answerDict = getAnswers(service, FORM_IDS)
+    answerList = []
+
+    for formKey in answerDict:
+        processedAnswers = processAnswer(answerDict[formKey])
+
+        answerList.append(processedAnswers)
+        
+    return answerList
 
 def processAnswer(ansList) -> dict:
     res = {}
     for ans in ansList:
-        if not hasattr(res, ans):
+        if not ans in res:
             res[ans] = 1
         else:
             res[ans] += 1
+
 
     return res
 
